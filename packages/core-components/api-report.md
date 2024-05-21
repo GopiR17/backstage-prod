@@ -39,6 +39,7 @@ import { default as React_2 } from 'react';
 import * as React_3 from 'react';
 import { ReactElement } from 'react';
 import { ReactNode } from 'react';
+import { RouteRef } from '@backstage/frontend-plugin-api';
 import { SessionApi } from '@backstage/core-plugin-api';
 import { SignInPageProps } from '@backstage/core-plugin-api';
 import { SparklinesLineProps } from 'react-sparklines';
@@ -963,7 +964,7 @@ export const SidebarGroup: (props: SidebarGroupProps) => React_2.JSX.Element;
 export interface SidebarGroupProps extends BottomNavigationActionProps {
   children?: React_2.ReactNode;
   priority?: number;
-  to?: string;
+  to?: string | RouteRef;
 }
 
 // Warning: (ae-forgotten-export) The symbol "SidebarItemProps" needs to be exported by the entry point index.d.ts

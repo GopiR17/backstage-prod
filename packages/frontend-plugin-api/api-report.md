@@ -1159,7 +1159,7 @@ export function useRouteRef<
 
 // @public
 export function useRouteRef<TParams extends AnyRouteRefParams>(
-  routeRef: RouteRef<TParams> | SubRouteRef<TParams>,
+  routeRef?: RouteRef<TParams> | SubRouteRef<TParams>,
 ): RouteFunc<TParams>;
 
 // @public

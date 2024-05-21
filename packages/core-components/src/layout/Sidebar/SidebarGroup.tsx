@@ -25,6 +25,7 @@ import { Link } from '../../components/Link/Link';
 import { SidebarConfig, SidebarConfigContext } from './config';
 import { MobileSidebarContext } from './MobileSidebarContext';
 import { useSidebarPinState } from './SidebarPinStateContext';
+import { useRouteRef, RouteRef } from '@backstage/frontend-plugin-api';
 
 /**
  * Props for the `SidebarGroup`
@@ -35,7 +36,7 @@ export interface SidebarGroupProps extends BottomNavigationActionProps {
   /**
    * If the `SidebarGroup` should be a `Link`, `to` should be a pathname to that location
    */
-  to?: string;
+  to?: string | RouteRef;
   /**
    * If the `SidebarGroup`s should be in a different order than in the normal `Sidebar`, you can provide
    * each `SidebarGroup` it's own priority to reorder them.
@@ -124,9 +125,16 @@ const MobileSidebarGroup = (props: SidebarGroupProps) => {
 export const SidebarGroup = (props: SidebarGroupProps) => {
   const { children, to, label, icon, value } = props;
   const { isMobile } = useSidebarPinState();
+  const routeRef = typeof to !== 'string' ? to : undefined;
+  const getPath = useRouteRef(routeRef);
 
   return isMobile ? (
-    <MobileSidebarGroup to={to} label={label} icon={icon} value={value} />
+    <MobileSidebarGroup
+      to={getPath?.() || to}
+      label={label}
+      icon={icon}
+      value={value}
+    />
   ) : (
     <>{children}</>
   );

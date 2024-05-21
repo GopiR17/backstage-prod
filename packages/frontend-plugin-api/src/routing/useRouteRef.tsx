@@ -52,7 +52,7 @@ export function useRouteRef<
  * @public
  */
 export function useRouteRef<TParams extends AnyRouteRefParams>(
-  routeRef: RouteRef<TParams> | SubRouteRef<TParams>,
+  routeRef?: RouteRef<TParams> | SubRouteRef<TParams>,
 ): RouteFunc<TParams>;
 
 /**
@@ -67,7 +67,7 @@ export function useRouteRef<TParams extends AnyRouteRefParams>(
  * @public
  */
 export function useRouteRef<TParams extends AnyRouteRefParams>(
-  routeRef:
+  routeRef?:
     | RouteRef<TParams>
     | SubRouteRef<TParams>
     | ExternalRouteRef<TParams, any>,
@@ -76,11 +76,17 @@ export function useRouteRef<TParams extends AnyRouteRefParams>(
   const routeResolutionApi = useApi(routeResolutionApiRef);
 
   const routeFunc = useMemo(
-    () => routeResolutionApi.resolve(routeRef, { sourcePath: pathname }),
+    () =>
+      routeRef
+        ? routeResolutionApi.resolve(routeRef, { sourcePath: pathname })
+        : undefined,
     [routeResolutionApi, routeRef, pathname],
   );
 
+  if (!routeRef) return undefined;
+
   const isOptional = 'optional' in routeRef && routeRef.optional;
+
   if (!routeFunc && !isOptional) {
     throw new Error(`No path for ${routeRef}`);
   }
