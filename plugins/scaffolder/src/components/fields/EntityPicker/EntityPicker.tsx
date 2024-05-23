@@ -25,7 +25,8 @@ import {
 import { useApi } from '@backstage/core-plugin-api';
 import {
   catalogApiRef,
-  humanizeEntityRef,
+  EntityDisplayName,
+  entityPresentationApiRef,
 } from '@backstage/plugin-catalog-react';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
@@ -65,6 +66,7 @@ export const EntityPicker = (props: EntityPickerProps) => {
     uiSchema['ui:options']?.defaultNamespace || undefined;
 
   const catalogApi = useApi(catalogApiRef);
+  const entityPresentationApi = useApi(entityPresentationApiRef);
 
   const { value: entities, loading } = useAsync(async () => {
     const fields = ['metadata.name', 'metadata.namespace', 'kind'];
@@ -79,20 +81,21 @@ export const EntityPicker = (props: EntityPickerProps) => {
     uiSchema['ui:options']?.allowArbitraryValues ?? true;
 
   const getLabel = useCallback(
-    (ref: string) => {
+    (formDataOrRef: string) => {
       try {
-        return humanizeEntityRef(
-          parseEntityRef(ref, { defaultKind, defaultNamespace }),
-          {
-            defaultKind,
-            defaultNamespace,
-          },
+        const parsedRef = stringifyEntityRef(
+          parseEntityRef(formDataOrRef, { defaultKind, defaultNamespace }),
         );
+
+        return entityPresentationApi.forEntity(parsedRef, {
+          defaultKind,
+          defaultNamespace,
+        }).snapshot.primaryTitle;
       } catch (err) {
-        return ref;
+        return formDataOrRef;
       }
     },
-    [defaultKind, defaultNamespace],
+    [defaultKind, defaultNamespace, entityPresentationApi],
   );
 
   const onSelect = useCallback(
@@ -151,11 +154,15 @@ export const EntityPicker = (props: EntityPickerProps) => {
         loading={loading}
         onChange={onSelect}
         options={entities || []}
+        renderOption={option => <EntityDisplayName entityRef={option} />}
         getOptionLabel={option =>
           // option can be a string due to freeSolo.
           typeof option === 'string'
             ? option
-            : humanizeEntityRef(option, { defaultKind, defaultNamespace })!
+            : entityPresentationApi.forEntity(option, {
+                defaultKind,
+                defaultNamespace,
+              }).snapshot.primaryTitle
         }
         autoSelect
         freeSolo={allowArbitraryValues}
