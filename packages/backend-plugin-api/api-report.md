@@ -204,6 +204,7 @@ export namespace coreServices {
   const rootConfig: ServiceRef<RootConfigService, 'root'>;
   const database: ServiceRef<DatabaseService, 'plugin'>;
   const discovery: ServiceRef<DiscoveryService, 'plugin'>;
+  const health: ServiceRef<HealthService, 'root'>;
   const httpAuth: ServiceRef<HttpAuthService, 'plugin'>;
   const httpRouter: ServiceRef<HttpRouterService, 'plugin'>;
   const lifecycle: ServiceRef<LifecycleService, 'plugin'>;
@@ -324,6 +325,9 @@ export type ExtensionPoint<T> = {
 export interface ExtensionPointConfig {
   id: string;
 }
+
+// @public (undocumented)
+export interface HealthService {}
 
 // @public (undocumented)
 export interface HttpAuthService {
